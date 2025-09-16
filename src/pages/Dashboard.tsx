@@ -1,55 +1,62 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/stats-card";
-import { 
-  TestTube2, 
-  Shield, 
-  FolderOpen, 
-  Clock, 
+import React, { useState, useEffect } from 'react';
+import { extCommon } from "../js/ext.js";
+import axios from "axios";
+import {
+  TestTube2,
+  Shield,
+  FolderOpen,
+  Clock,
   ExternalLink,
-  Plus 
+  Plus
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/healthcare-hero.jpg";
 
-// Mock data for demonstration
-const recentProjects = [
-  {
-    id: 1,
-    name: "Medical Device Validation",
-    description: "FDA compliance test cases for cardiac monitor",
-    testCases: 156,
-    compliance: 94,
-    lastUpdated: "2 hours ago",
-    status: "active"
-  },
-  {
-    id: 2,
-    name: "Software Risk Analysis",
-    description: "IEC 62304 software lifecycle compliance",
-    testCases: 89,
-    compliance: 91,
-    lastUpdated: "1 day ago",
-    status: "review"
-  },
-  {
-    id: 3,
-    name: "Quality Management System",
-    description: "ISO 13485 quality system validation",
-    testCases: 203,
-    compliance: 97,
-    lastUpdated: "3 days ago",
-    status: "completed"
-  }
-];
 
 const Dashboard = () => {
+  const [recentProjects, setRecentProjects] = useState<any[]>([]);
+    const [totalCases, setTotalCases] = useState(0);
+const [complianceCases, setComplianceCases] = useState(0);
+const [complianceCoverage, setComplianceCoverage] = useState(0);
+const [timeSaved, setTimeSaved] = useState(0);
+  const handlePost = async () => {
+  try {
+    const response = await axios.get(
+      "https://4f09c4285952.ngrok-free.app/v1/dash-test/dashboardData",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = response.data; // ✅ axios auto-parses JSON
+    setRecentProjects(data?.recentProject || []);
+    setTotalCases(data.TotalTestCasesGenerated);
+    setComplianceCoverage(data.complianceCoverage);
+    setComplianceCases(data.complianceCoveredTestCases);
+    setTimeSaved(data.timeSaved);
+
+    console.log("API Response:", data);
+  } catch (error) {
+    console.error("Error in GET request:", error);
+  }
+};
+
+  useEffect(() => {
+    console.log("coming here")
+    handlePost();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-primary/5 to-accent/5 py-12">
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent" />
-        <div 
+        <div
           className="absolute inset-0 opacity-10 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
@@ -59,7 +66,7 @@ const Dashboard = () => {
               Healthcare Test Case Generation Platform
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Streamline your medical device compliance with automated test case generation 
+              Streamline your medical device compliance with automated test case generation
               and traceability management.
             </p>
             <Link to="/create-project">
@@ -77,30 +84,27 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <StatsCard
             title="Total Test Cases Generated"
-            value="1,247"
+            value={totalCases}
             description="Across all projects"
             icon={TestTube2}
-            trend={{ value: 12, isPositive: true }}
           />
           <StatsCard
             title="Compliance-Covered Test Cases"
-            value="984"
+            value={complianceCases}
             description="Mapped to compliance standards"
             icon={Shield}
-            trend={{ value: 8, isPositive: true }}
           />
           <StatsCard
             title="Compliance Coverage"
-            value="79%"
+            value={`${complianceCoverage}%`}
             description="Test cases with compliance mapping"
             icon={Shield}
           />
           <StatsCard
             title="Time Saved"
-            value="156h"
+            value={`${timeSaved} Hours`}
             description="Automated test generation"
             icon={Clock}
-            trend={{ value: 23, isPositive: true }}
           />
         </div>
 
@@ -117,33 +121,32 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentProjects.map((project) => (
+              {recentProjects.length > 0 && recentProjects.map((project) => (
                 <div
                   key={project.id}
                   className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary/50 transition-colors"
                 >
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
-                      <h3 className="font-semibold text-foreground">{project.name}</h3>
+                      <h3 className="font-semibold text-foreground">{project.projectName}</h3>
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
-                          project.status === "completed"
+                        className={`px-2 py-1 text-xs rounded-full ${project.status === "completed"
                             ? "bg-success/10 text-success"
                             : project.status === "active"
-                            ? "bg-primary/10 text-primary"
-                            : "bg-warning/10 text-warning"
-                        }`}
+                              ? "bg-primary/10 text-primary"
+                              : "bg-warning/10 text-warning"
+                          }`}
                       >
                         {project.status}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
                     <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
-                      <span>{project.testCases} test cases</span>
-                      <span>Updated {project.lastUpdated}</span>
+                      <span>{project.TestCasesGenerated} test cases</span>
+                      <span>Updated {project.UpdatedTime} ago</span>
                     </div>
                   </div>
-                  <Link to={`/projects/${project.id}`}>
+                  <Link to={`/projects/${project.iprojectId}`}>
                     <Button variant="ghost" size="sm">
                       <ExternalLink className="w-4 h-4" />
                     </Button>
