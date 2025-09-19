@@ -34,9 +34,9 @@ const CreateProject = () => {
     try {
       // Make POST API call to create project
       const response = await axios.post(
-        "http://localhost:3000/v1/dash-test/dashboardData",
+        "http://localhost:3000/v1/dash-test/createProject",
         {
-          name: projectName,
+          project_name: projectName,
           description: projectDescription,
         },
         {
@@ -50,7 +50,7 @@ const CreateProject = () => {
       console.log("API Response:", data);
       
       // Use projectId from API response, or generate mock ID as fallback
-      const projectId = data.projectId || data.id || Math.floor(Math.random() * 1000) + 1;
+      const projectId = data.project_id || data.id || Math.floor(Math.random() * 1000) + 1;
 
       toast({
         title: "Project Created",
@@ -66,7 +66,7 @@ const CreateProject = () => {
       //   description: "Failed to create project. Please try again.",
       //   variant: "destructive",
       // });
-            navigate(`/projects/1234/upload-requirements`);
+         //   navigate(`/projects/1234/upload-requirements`);
 
     } finally {
       setIsLoading(false);

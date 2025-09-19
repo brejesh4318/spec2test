@@ -12,22 +12,7 @@ const Projects = () => {
   const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
-  const handlePost = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/v1/dash-test/",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = response.data;
-      setProject(data?.Project || []);
-    } catch (error) {
-      // fallback mock data
-      const mock = [
+ const mock = [
         {
           projectName: "Cardiac Monitoring System",
           projectId: "123456",
@@ -50,32 +35,49 @@ const Projects = () => {
         },
          {
         "projectName": "Cybersecurity Assessment",
-        "projectId": "789012",
-        "TestCasesGenerated": 180,
-        "description": "Security assessment for medical devices",
-        "UpdatedTime": "3 hours",
+        "projectId": "123456",
+        "TestCasesGenerated": 234,
+        "description": "FDA compliance test cases for cardiac monitor",
+        "UpdatedTime": "2 hours",
         "status": "active",
-        "documents": "4",
+        "documents": "2",
         "complianceStandards": [
             "FDA 21 CFR Part 820",
-            "IEC 62304"
+            "ISO 13485"
         ]
     },
     {
         "projectName": "Quality Management System",
-        "projectId": "345678",
-        "TestCasesGenerated": 120,
-        "description": "QMS implementation and validation",
-        "UpdatedTime": "5 hours",
-        "status": "review",
-        "documents": "3",
+        "projectId": "123456",
+        "TestCasesGenerated": 234,
+        "description": "FDA compliance test cases for cardiac monitor",
+        "UpdatedTime": "2 hours",
+        "status": "active",
+        "documents": "2",
         "complianceStandards": [
-            "ISO 13485",
-            "ISO 14971"
+            "FDA 21 CFR Part 820",
+            "ISO 13485"
         ]
     }
       ];
-      setProject(mock);
+
+ 
+  const handlePost = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/v1/dash-test/getProjects",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = response.data.projects;
+      setProject(data || []);
+    } catch (error) {
+      // fallback mock data
+     
+     // setProject(mock);
       console.error("Error in GET request:", error);
     }
   };
@@ -224,10 +226,10 @@ const Projects = () => {
                     <span className="text-xs text-muted-foreground">
                       {p.documents} documents uploaded
                     </span>
-                    <Link to={`/projects/${p.projectId}/upload-requirements`}>
+                    <Link to={`/projects/${p.projectId}/test-cases`}>
                       <Button variant="outline" size="sm">
                         <ExternalLink className="w-4 h-4 mr-2" />
-                        Upload Requirements
+                        View Details
                       </Button>
                     </Link>
                   </div>

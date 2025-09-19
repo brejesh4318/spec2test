@@ -26,6 +26,7 @@ interface TestCase {
   requirement: string;
   steps: string[];
   complianceTags: string[];
+  testCaseUniqueId: string;
 }
 
 interface ProjectData {
@@ -51,7 +52,7 @@ const navigate = useNavigate();
         setError(null);
 
         const response = await axios.get(
-          `http://localhost:3000/v1/projects/${id}/test-cases`,
+          `http://localhost:3000/v1/dash-test/getTestCases/${id}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -97,7 +98,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId": "12345"
             },
             {
               "testCaseId": "1234",
@@ -111,7 +113,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             },
             {
               "testCaseId": "1234",
@@ -125,7 +128,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             },
             {
               "testCaseId": "1234",
@@ -139,7 +143,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             },
             {
               "testCaseId": "1234",
@@ -153,7 +158,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             },
             {
               "testCaseId": "1234",
@@ -167,7 +173,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             },
             {
               "testCaseId": "1234",
@@ -181,7 +188,8 @@ const navigate = useNavigate();
                 "Test password complexity requirements",
                 "Validate session timeout functionality"
               ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+              "testCaseUniqueId":"12345"
             }
           ]
         })
@@ -263,7 +271,7 @@ const navigate = useNavigate();
       <div className="min-h-screen bg-background py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8">
-            <Link to={`/projects/${id}`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+            <Link to={`/projects`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Project Details
             </Link>
@@ -289,7 +297,7 @@ const navigate = useNavigate();
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link to={`/projects/${id}`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+          <Link to={`/projects`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Project Details
           </Link>
@@ -450,7 +458,7 @@ const navigate = useNavigate();
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => navigate(`/projects/${id}/test-cases/${testCase.testCaseId}`)}
+                        onClick={() => navigate(`/projects/${id}/test-cases/${testCase.testCaseUniqueId}`)}
                       >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         View Details

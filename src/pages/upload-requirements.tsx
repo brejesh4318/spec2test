@@ -22,7 +22,7 @@ const UploadRequirements = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const navigate = useNavigate();
-  const { projectId } = useParams();
+  const { id } = useParams();
   const { toast } = useToast();
 
   // Accepted file types
@@ -150,9 +150,9 @@ const UploadRequirements = () => {
   try {
     // Create FormData for file upload
     const formData = new FormData();
-
+console.log("Uploading files for project ID:", id);
     // Add project ID to form data
-    formData.append("projectId", projectId || "");
+    formData.append("project_id", id || "");
 
     // Add all files to form data
     uploadedFiles.forEach((file) => {
@@ -161,7 +161,7 @@ const UploadRequirements = () => {
 
     // Make API call to upload files
     const response = await axios.post(
-      `http://localhost:3000/v1/projects/${projectId}/upload-requirements`,
+      `http://localhost:3000/v1/dash-test/testcaseGenerator`,
       formData,
       {
         headers: {
@@ -185,9 +185,9 @@ const UploadRequirements = () => {
     });
 
     // ✅ Navigate to the test cases page
-    navigate(`/projects/${projectId}/test-cases`);
+    navigate(`/projects/${id}/test-cases`);
   } catch (error) {
-    navigate(`/projects/${projectId}/test-cases`);
+   // navigate(`/projects/${projectId}/test-cases`);
     console.error("Error uploading files:", error);
 
     let errorMessage = "Failed to upload files. Please try again.";
@@ -216,7 +216,7 @@ const UploadRequirements = () => {
 
   const handleSkip = () => {
     // Navigate to project page even without files
-    navigate(`/projects/${projectId}`);
+    navigate(`/projects/${id}`);
   };
 
   return (
