@@ -2,16 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/stats-card";
 import React, { useState, useEffect } from 'react';
-import { extCommon } from "../js/ext.js";
 import axios from "axios";
-import {
-  TestTube2,
-  Shield,
-  FolderOpen,
-  Clock,
-  ExternalLink,
-  Plus
-} from "lucide-react";
+import {TestTube2,Shield,FolderOpen,Clock,ExternalLink,Plus} from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/healthcare-hero.jpg";
 
@@ -25,7 +17,7 @@ const [timeSaved, setTimeSaved] = useState(0);
   const handlePost = async () => {
   try {
     const response = await axios.get(
-      "https://4f09c4285952.ngrok-free.app/v1/dash-test/dashboardData",
+      "http://localhost:3000/v1/dash-test/dashboardData",
       {
         headers: {
           "Content-Type": "application/json",
@@ -42,6 +34,36 @@ const [timeSaved, setTimeSaved] = useState(0);
 
     console.log("API Response:", data);
   } catch (error) {
+    // setTotalCases(456)
+      // setComplianceCoverage(91)
+      // setComplianceCases(364)
+      // setTimeSaved(108)
+      // setRecentProjects([
+      //   {
+      //     "projectName": "Cardiac Monitoring System",
+      //     "projectId": "123456",
+      //     "TestCasesGenerated": 234,
+      //     "description": "FDA compliance test cases for cardiac monitor",
+      //     "UpdatedTime": "2 hours",
+      //     "status": "active"
+      //   },
+      //   {
+      //     "projectName": "Patient Data Platform",
+      //     "projectId": "123456",
+      //     "TestCasesGenerated": 234,
+      //     "description": "IEC 62304 software lifecycle compliance",
+      //     "UpdatedTime": "1 day",
+      //     "status": "review"
+      //   },
+      //   {
+      //     "projectName": "Medical Device Integration",
+      //     "projectId": "123456",
+      //     "TestCasesGenerated": 234,
+      //     "description": "ISO 13485 quality system validation",
+      //     "UpdatedTime": "3 days",
+      //     "status": "completed"
+      //   }
+      // ])
     console.error("Error in GET request:", error);
   }
 };

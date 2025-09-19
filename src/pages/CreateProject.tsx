@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const CreateProject = () => {
   const [projectName, setProjectName] = useState("");
@@ -18,7 +19,7 @@ const CreateProject = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!projectName.trim()) {
       toast({
         title: "Validation Error",
@@ -29,27 +30,44 @@ const CreateProject = () => {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Make POST API call to create project
+      const response = await axios.post(
+        "http://localhost:3000/v1/dash-test/dashboardData",
+        {
+          name: projectName,
+          description: projectDescription,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       
-      // Generate a mock project ID
-      const projectId = Math.floor(Math.random() * 1000) + 1;
+      const data = response.data;
+      console.log("API Response:", data);
       
+      // Use projectId from API response, or generate mock ID as fallback
+      const projectId = data.projectId || data.id || Math.floor(Math.random() * 1000) + 1;
+
       toast({
         title: "Project Created",
         description: `${projectName} has been successfully created.`,
       });
-      
-      // Navigate to project details
-      navigate(`/projects/${projectId}`);
+
+      // Navigate to upload requirements page
+      navigate(`/projects/${projectId}/upload-requirements`);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create project. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Error creating project:", error);
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to create project. Please try again.",
+      //   variant: "destructive",
+      // });
+            navigate(`/projects/1234/upload-requirements`);
+
     } finally {
       setIsLoading(false);
     }

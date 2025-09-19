@@ -132,7 +132,7 @@ const ProjectDetails = () => {
         </div>
 
         {/* Project Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center space-x-3">
@@ -166,15 +166,15 @@ const ProjectDetails = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         {/* Main Content */}
         <Card>
           <CardContent className="p-6">
             <Tabs defaultValue="upload" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-0">
                 <TabsTrigger value="upload">Upload Requirements</TabsTrigger>
-                <TabsTrigger value="generate">Generate Test Cases</TabsTrigger>
+                {/* <TabsTrigger value="generate">Generate Test Cases</TabsTrigger> */}
               </TabsList>
               
               <TabsContent value="upload" className="space-y-6">

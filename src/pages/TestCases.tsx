@@ -1,93 +1,212 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  ArrowLeft, 
-  Download, 
-  ExternalLink, 
-  Search, 
+import { useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Download,
+  ExternalLink,
+  Search,
   Filter,
   TestTube2,
   Workflow,
-  Shield
+  Shield,
+  Loader2
 } from "lucide-react";
+import axios from "axios";
 
-// Mock test cases data
-const testCases = [
-  {
-    id: "TC-001",
-    title: "Verify heart rate measurement accuracy",
-    requirement: "Device shall measure heart rate with ±2 BPM accuracy",
-    steps: [
-      "Connect device to patient simulator",
-      "Set simulator to 60 BPM",
-      "Record device measurement for 30 seconds",
-      "Verify measurement is within 58-62 BPM range"
-    ],
-    complianceTags: ["FDA 21 CFR Part 820", "ISO 13485"],
-    priority: "High",
-    status: "Active"
-  },
-  {
-    id: "TC-002", 
-    title: "Test alarm functionality for critical values",
-    requirement: "System shall trigger alarm for HR > 120 BPM within 5 seconds",
-    steps: [
-      "Set patient simulator to 125 BPM",
-      "Start device monitoring",
-      "Measure time to alarm activation",
-      "Verify alarm triggers within 5 seconds"
-    ],
-    complianceTags: ["IEC 60601-1-8", "FDA 21 CFR Part 820"],
-    priority: "Critical",
-    status: "Active"
-  },
-  {
-    id: "TC-003",
-    title: "Validate data storage integrity",
-    requirement: "Device shall store 24 hours of continuous data without loss",
-    steps: [
-      "Start continuous monitoring session",
-      "Monitor for 24 hours",
-      "Verify all data points are stored",
-      "Check for data corruption or gaps"
-    ],
-    complianceTags: ["FDA 21 CFR Part 11", "ISO 13485"],
-    priority: "Medium",
-    status: "Review"
-  },
-  {
-    id: "TC-004",
-    title: "Test user authentication security",
-    requirement: "System shall require secure user authentication",
-    steps: [
-      "Attempt login with invalid credentials",
-      "Verify access is denied",
-      "Test password complexity requirements",
-      "Validate session timeout functionality"
-    ],
-    complianceTags: ["FDA Cybersecurity", "HIPAA"],
-    priority: "High", 
-    status: "Active"
-  }
-];
+interface TestCase {
+  testCaseId: string;
+  testCaseNo: string;
+  priority: string;
+  testCaseName: string;
+  requirement: string;
+  steps: string[];
+  complianceTags: string[];
+}
+
+interface ProjectData {
+  projectName: string;
+  projectId: string;
+  testCases: TestCase[];
+}
 
 const TestCases = () => {
   const { id } = useParams();
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+const navigate = useNavigate();
+  // Fetch test cases data when component mounts
+  useEffect(() => {
+    const fetchTestCases = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const filteredTestCases = testCases.filter(testCase => {
-    const matchesSearch = testCase.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         testCase.requirement.toLowerCase().includes(searchTerm.toLowerCase());
+        const response = await axios.get(
+          `http://localhost:3000/v1/projects/${id}/test-cases`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = response.data;
+        console.log("Test Cases API Response:", data);
+
+        setProjectData(data);
+      } catch (error) {
+        console.error("Error fetching test cases:", error);
+
+        let errorMessage = "Failed to load test cases. Please try again.";
+
+        if (axios.isAxiosError(error)) {
+          if (error.response?.status === 404) {
+            errorMessage = "Project not found.";
+          } else if (error.response?.status === 403) {
+            errorMessage = "Access denied. You don't have permission to view this project.";
+          } else if (error.response?.status === 500) {
+            errorMessage = "Server error. Please try again later.";
+          } else if (error.response?.data?.message) {
+            errorMessage = error.response.data.message;
+          }
+        } else if (error.message === 'Network Error') {
+          errorMessage = "Network error. Please check your connection.";
+        }
+        setProjectData({
+          "projectName": "ALM Platform Sync",
+          "projectId": "12345",
+          "testCases": [
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            },
+            {
+              "testCaseId": "1234",
+              "testCaseNo": "1",
+              "priority": "High",
+              "testCaseName": "Verify heart rate measurement accuracy",
+              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+              "steps": [
+                "Attempt login with invalid credentials",
+                "Verify access is denied",
+                "Test password complexity requirements",
+                "Validate session timeout functionality"
+              ],
+              "complianceTags": ["FDA Cybersecurity", "HIPAA"]
+            }
+          ]
+        })
+
+        // setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchTestCases();
+    }
+  }, [id]);
+
+  // Filter test cases based on search and filters
+  const filteredTestCases = projectData?.testCases?.filter(testCase => {
+    const matchesSearch = testCase.testCaseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      testCase.requirement.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      testCase.testCaseId.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPriority = priorityFilter === "all" || testCase.priority === priorityFilter;
-    const matchesStatus = statusFilter === "all" || testCase.status === statusFilter;
-    return matchesSearch && matchesPriority && matchesStatus;
-  });
+    // Note: The API response doesn't include status, so we'll skip status filtering for now
+    // const matchesStatus = statusFilter === "all" || testCase.status === statusFilter;
+    return matchesSearch && matchesPriority;
+  }) || [];
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -97,6 +216,8 @@ const TestCases = () => {
         return "bg-warning/10 text-warning border-warning/20";
       case "Medium":
         return "bg-primary/10 text-primary border-primary/20";
+      case "Low":
+        return "bg-secondary/10 text-secondary-foreground border-secondary/20";
       default:
         return "bg-muted text-muted-foreground";
     }
@@ -115,6 +236,54 @@ const TestCases = () => {
     }
   };
 
+  // Handle retry functionality
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+              <p className="text-muted-foreground">Loading test cases...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <Link to={`/projects/${id}`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Project Details
+            </Link>
+          </div>
+          <Card>
+            <CardContent className="text-center py-12">
+              <TestTube2 className="w-12 h-12 text-destructive mx-auto mb-4 opacity-50" />
+              <p className="text-lg font-medium text-foreground mb-2">Error Loading Test Cases</p>
+              <p className="text-sm text-muted-foreground mb-4">{error}</p>
+              <Button onClick={handleRetry} variant="outline">
+                Try Again
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Main render
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,7 +297,7 @@ const TestCases = () => {
             <div>
               <h1 className="text-3xl font-bold text-foreground">Test Cases</h1>
               <p className="text-muted-foreground mt-2">
-                Generated test cases for Medical Device Validation project
+                Generated test cases for {projectData?.projectName || 'project'}
               </p>
             </div>
             <div className="flex items-center space-x-3 mt-4 md:mt-0">
@@ -171,18 +340,10 @@ const TestCases = () => {
                     <option value="Critical">Critical</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
                   </select>
                 </div>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="border border-border rounded-md px-3 py-2 bg-background text-foreground"
-                >
-                  <option value="all">All Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Review">Review</option>
-                  <option value="Completed">Completed</option>
-                </select>
+                {/* Removed status filter since API doesn't provide status */}
               </div>
             </div>
           </CardContent>
@@ -219,21 +380,27 @@ const TestCases = () => {
 
         {/* Test Cases List */}
         <div className="space-y-4">
-          {filteredTestCases.map((testCase) => (
-            <Card key={testCase.id} className="hover:shadow-lg transition-all duration-300">
+          {filteredTestCases.map((testCase, index) => (
+            <Card key={testCase.testCaseId + index} className="hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <span className="font-mono text-sm text-muted-foreground">{testCase.id}</span>
+                      <span className="font-mono text-sm text-muted-foreground">
+                        TC-{testCase.testCaseNo.padStart(3, '0')}
+                      </span>
+                      <span className="font-mono text-xs text-muted-foreground">
+                        ID: {testCase.testCaseId}
+                      </span>
                       <Badge className={getPriorityColor(testCase.priority)}>
                         {testCase.priority}
                       </Badge>
-                      <Badge className={getStatusColor(testCase.status)}>
-                        {testCase.status}
+                      {/* Default status badge since API doesn't provide status */}
+                      <Badge className={getStatusColor("Active")}>
+                        Active
                       </Badge>
                     </div>
-                    <CardTitle className="text-lg mb-2">{testCase.title}</CardTitle>
+                    <CardTitle className="text-lg mb-2">{testCase.testCaseName}</CardTitle>
                     <div className="bg-secondary/50 p-3 rounded-lg">
                       <p className="text-sm font-medium text-foreground mb-1">Requirement:</p>
                       <p className="text-sm text-muted-foreground">{testCase.requirement}</p>
@@ -247,8 +414,8 @@ const TestCases = () => {
                   <div>
                     <p className="text-sm font-medium text-foreground mb-2">Test Steps:</p>
                     <ol className="list-decimal list-inside space-y-1">
-                      {testCase.steps.map((step, index) => (
-                        <li key={index} className="text-sm text-muted-foreground">
+                      {testCase.steps.map((step, stepIndex) => (
+                        <li key={stepIndex} className="text-sm text-muted-foreground">
                           {step}
                         </li>
                       ))}
@@ -262,8 +429,8 @@ const TestCases = () => {
                       <span>Compliance Standards:</span>
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {testCase.complianceTags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
+                      {testCase.complianceTags.map((tag, tagIndex) => (
+                        <Badge key={tagIndex} variant="outline" className="text-xs">
                           {tag}
                         </Badge>
                       ))}
@@ -273,14 +440,18 @@ const TestCases = () => {
                   {/* Actions */}
                   <div className="flex items-center justify-between pt-2 border-t border-border">
                     <div className="text-xs text-muted-foreground">
-                      Last updated: 2 hours ago
+                      Test Case #{testCase.testCaseNo}
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button variant="ghost" size="sm">
                         <TestTube2 className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/projects/${id}/test-cases/${testCase.testCaseId}`)}
+                      >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         View Details
                       </Button>
@@ -292,13 +463,16 @@ const TestCases = () => {
           ))}
         </div>
 
-        {filteredTestCases.length === 0 && (
+        {filteredTestCases.length === 0 && !loading && (
           <Card className="mt-8">
             <CardContent className="text-center py-12">
               <TestTube2 className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <p className="text-lg font-medium text-foreground">No test cases found</p>
               <p className="text-sm text-muted-foreground">
-                Try adjusting your search or filter criteria
+                {projectData?.testCases?.length === 0
+                  ? "No test cases have been generated for this project yet."
+                  : "Try adjusting your search or filter criteria"
+                }
               </p>
             </CardContent>
           </Card>
