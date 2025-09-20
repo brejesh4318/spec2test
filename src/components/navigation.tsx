@@ -6,7 +6,6 @@ const Navigation = () => {
   const navItems = [
     { to: "/", label: "Dashboard", icon: Activity },
     { to: "/projects", label: "Projects", icon: FileText },
-    { to: "/compliance", label: "Compliance", icon: Shield },
   ];
 
   return (

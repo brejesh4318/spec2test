@@ -168,7 +168,7 @@ const [timeSaved, setTimeSaved] = useState(0);
                       <span>Updated {project.UpdatedTime} ago</span>
                     </div>
                   </div>
-                  <Link to={`/projects/${project.iprojectId}`}>
+                  <Link to={`/projects/${project.projectId}/test-cases`}>
                     <Button variant="ghost" size="sm">
                       <ExternalLink className="w-4 h-4" />
                     </Button>

@@ -223,9 +223,12 @@ const Projects = () => {
 
                   {/* Actions */}
                   <div className="flex items-center justify-between pt-2 border-t border-border">
-                    <span className="text-xs text-muted-foreground">
-                      {p.documents} documents uploaded
-                    </span>
+                    <Link to={`/projects/${p.projectId}/upload-requirements`}>
+                      <Button variant="outline" size="sm">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Upload Requirements
+                      </Button>
+                    </Link>
                     <Link to={`/projects/${p.projectId}/test-cases`}>
                       <Button variant="outline" size="sm">
                         <ExternalLink className="w-4 h-4 mr-2" />
