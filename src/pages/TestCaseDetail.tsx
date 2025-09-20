@@ -31,7 +31,7 @@ const TestCaseDetail = () => {
   const [error, setError] = useState(null);
 
   // API configuration
-  const API_BASE_URL = 'http://localhost:3001/api';
+  const API_BASE_URL = 'http://localhost:3000/api';
 
   // Mock data fallback
   const mockTestCaseData = {
@@ -85,7 +85,7 @@ const TestCaseDetail = () => {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`${API_BASE_URL}/test-cases/${testCaseId}`, {
+      const response = await axios.get(`http://localhost:3000/v1/dash-test/getTestCaseDetail/${testCaseId}`, {
         headers: {
           'Content-Type': 'application/json',
           // Add authorization header if needed
@@ -93,9 +93,9 @@ const TestCaseDetail = () => {
         },
         timeout: 10000, // 10 second timeout
       });
-
-      if (response.data) {
-        setTestCase(response.data);
+      console.log('API Response:', response.data.test_case);
+      if (response.data.test_case) {
+        setTestCase(response.data.test_case);
         toast({
           title: "Success",
           description: "Test case data loaded successfully.",
@@ -105,7 +105,7 @@ const TestCaseDetail = () => {
       console.error('API Error:', err);
       
       // Use mock data as fallback
-      setTestCase(mockTestCaseData);
+      // setTestCase(mockTestCaseData);
       setError(null); // Clear error since we're using mock data
       
       // Show different toast based on error type

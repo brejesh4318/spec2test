@@ -31,8 +31,6 @@ const App = () => (
           <Route path="/projects/:id/upload-requirements" element={<UploadRequirements />} />
           <Route path="/projects/:id/test-cases" element={<TestCases />} />
           <Route path="/projects/:id/test-cases/:testCaseId" element={<TestCaseDetail />} /> {/* ✅ new detail route */}
-          <Route path="/compliance" element={<Compliance />} />
-          <Route path="/compliance/:projectId" element={<Compliance />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

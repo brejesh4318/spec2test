@@ -361,14 +361,6 @@ console.log("Uploading files for project ID:", id);
 
         {/* Actions */}
         <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            onClick={handleSkip}
-            disabled={isUploading}
-          >
-            Skip for Now
-          </Button>
-          
           <div className="flex items-center space-x-4">
             <Button
               onClick={handleUpload}
