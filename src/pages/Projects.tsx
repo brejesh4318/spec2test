@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, ExternalLink, Calendar, TestTube2, Shield, Filter } from "lucide-react";
+import { Search, Plus, ExternalLink, Calendar, TestTube2, Shield, Filter, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -12,39 +12,41 @@ const Projects = () => {
   const [filteredProjects, setFilteredProjects] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
- const mock = [
-        {
-          projectName: "Cardiac Monitoring System",
-          projectId: "123456",
-          TestCasesGenerated: 234,
-          description: "FDA compliance test cases for cardiac monitor",
-          UpdatedTime: "2 hours",
-          status: "active",
-          documents: "2",
-          complianceStandards: ["FDA 21 CFR Part 820", "ISO 13485"],
-        },
-        {
-          projectName: "Software Risk Analysis",
-          projectId: "654321",
-          TestCasesGenerated: 150,
-          description: "Risk assessment for medical software",
-          UpdatedTime: "1 day",
-          status: "review",
-          documents: "3",
-          complianceStandards: ["ISO 14971"],
-        },
-         {
-        "projectName": "Cybersecurity Assessment",
-        "projectId": "123456",
-        "TestCasesGenerated": 234,
-        "description": "FDA compliance test cases for cardiac monitor",
-        "UpdatedTime": "2 hours",
-        "status": "active",
-        "documents": "2",
-        "complianceStandards": [
-            "FDA 21 CFR Part 820",
-            "ISO 13485"
-        ]
+  const [isLoading, setIsLoading] = useState(false);
+
+  const mock = [
+    {
+      projectName: "Cardiac Monitoring System",
+      projectId: "123456",
+      TestCasesGenerated: 234,
+      description: "FDA compliance test cases for cardiac monitor",
+      UpdatedTime: "2 hours",
+      status: "active",
+      documents: "2",
+      complianceStandards: ["FDA 21 CFR Part 820", "ISO 13485"],
+    },
+    {
+      projectName: "Software Risk Analysis",
+      projectId: "654321",
+      TestCasesGenerated: 150,
+      description: "Risk assessment for medical software",
+      UpdatedTime: "1 day",
+      status: "review",
+      documents: "3",
+      complianceStandards: ["ISO 14971"],
+    },
+    {
+      "projectName": "Cybersecurity Assessment",
+      "projectId": "123456",
+      "TestCasesGenerated": 234,
+      "description": "FDA compliance test cases for cardiac monitor",
+      "UpdatedTime": "2 hours",
+      "status": "active",
+      "documents": "2",
+      "complianceStandards": [
+          "FDA 21 CFR Part 820",
+          "ISO 13485"
+      ]
     },
     {
         "projectName": "Quality Management System",
@@ -59,10 +61,10 @@ const Projects = () => {
             "ISO 13485"
         ]
     }
-      ];
+  ];
 
- 
   const handlePost = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         "https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/getProjects",
@@ -76,9 +78,10 @@ const Projects = () => {
       setProject(data || []);
     } catch (error) {
       // fallback mock data
-     
-     // setProject(mock);
+      // setProject(mock);
       console.error("Error in GET request:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -167,103 +170,118 @@ const Projects = () => {
           </CardContent>
         </Card>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredProjects.map((p) => (
-            <Card
-              key={p.projectId}
-              className="hover:shadow-lg transition-all duration-300"
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">
-                      {p.projectName}
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {p.description}
-                    </p>
-                  </div>
-                  <Badge className={getStatusColor(p.status)}>{p.status}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Stats */}
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-1">
-                        <TestTube2 className="w-4 h-4 text-accent" />
-                        <span>{p.TestCasesGenerated} tests</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Shield className="w-4 h-4 text-success" />
-                        <span>{p.documents} documents</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-1 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      <span>{p.UpdatedTime}</span>
-                    </div>
-                  </div>
-
-                  {/* Standards */}
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Compliance Standards:
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {p.complianceStandards?.map((standard: string) => (
-                        <Badge key={standard} variant="outline" className="text-xs">
-                          {standard}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center justify-between pt-2 border-t border-border">
-                    <Link to={`/projects/${p.projectId}/upload-requirements`}>
-                      <Button variant="outline" size="sm">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Upload Requirements
-                      </Button>
-                    </Link>
-                    <Link to={`/projects/${p.projectId}/test-cases`}>
-                      <Button variant="outline" size="sm">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {filteredProjects.length === 0 && (
+        {/* Loading Spinner */}
+        {isLoading ? (
           <Card className="mt-8">
             <CardContent className="text-center py-12">
-              <div className="text-muted-foreground mb-4">
-                <TestTube2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium">No projects found</p>
-                <p className="text-sm">
-                  {searchTerm || statusFilter !== "all"
-                    ? "Try adjusting your search or filter criteria"
-                    : "Create your first project to get started with test case generation"}
-                </p>
-              </div>
-              {!searchTerm && statusFilter === "all" && (
-                <Link to="/create-project">
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create First Project
-                  </Button>
-                </Link>
-              )}
+              <Loader2 className="w-12 h-12 mx-auto mb-4 animate-spin text-primary" />
+              <p className="text-lg font-medium">Loading projects...</p>
+              <p className="text-sm text-muted-foreground">
+                Please wait while we fetch your projects
+              </p>
             </CardContent>
           </Card>
+        ) : (
+          <>
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {filteredProjects.map((p) => (
+                <Card
+                  key={p.projectId}
+                  className="hover:shadow-lg transition-all duration-300"
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg mb-2">
+                          {p.projectName}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          {p.description}
+                        </p>
+                      </div>
+                      <Badge className={getStatusColor(p.status)}>{p.status}</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Stats */}
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-1">
+                            <TestTube2 className="w-4 h-4 text-accent" />
+                            <span>{p.TestCasesGenerated} tests</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Shield className="w-4 h-4 text-success" />
+                            <span>{p.documents} documents</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1 text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          <span>{p.UpdatedTime}</span>
+                        </div>
+                      </div>
+
+                      {/* Standards */}
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Compliance Standards:
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {p.complianceStandards?.map((standard: string) => (
+                            <Badge key={standard} variant="outline" className="text-xs">
+                              {standard}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-between pt-2 border-t border-border">
+                        <Link to={`/projects/${p.projectId}/upload-requirements`}>
+                          <Button variant="outline" size="sm">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Upload Requirements
+                          </Button>
+                        </Link>
+                        <Link to={`/projects/${p.projectId}/test-cases`}>
+                          <Button variant="outline" size="sm">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            View Details
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {filteredProjects.length === 0 && (
+              <Card className="mt-8">
+                <CardContent className="text-center py-12">
+                  <div className="text-muted-foreground mb-4">
+                    <TestTube2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium">No projects found</p>
+                    <p className="text-sm">
+                      {searchTerm || statusFilter !== "all"
+                        ? "Try adjusting your search or filter criteria"
+                        : "Create your first project to get started with test case generation"}
+                    </p>
+                  </div>
+                  {!searchTerm && statusFilter === "all" && (
+                    <Link to="/create-project">
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create First Project
+                      </Button>
+                    </Link>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
       </div>
     </div>
