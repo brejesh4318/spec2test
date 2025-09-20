@@ -161,7 +161,7 @@ console.log("Uploading files for project ID:", id);
 
     // Make API call to upload files
     const response = await axios.post(
-      `http://localhost:3000/v1/dash-test/testcaseGenerator`,
+      `https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/testcaseGenerator`,
       formData,
       {
         headers: {

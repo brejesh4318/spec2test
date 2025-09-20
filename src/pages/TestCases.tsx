@@ -51,7 +51,7 @@ const TestCases = () => {
         setError(null);
 
         const response = await axios.get(
-          `http://localhost:3000/v1/dash-test/getTestCases/${id}`,
+          `https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/getTestCases/${id}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -212,6 +212,49 @@ const TestCases = () => {
     }
   }, [id]);
 
+
+
+ const exportTestCases = async () => {
+  try {
+    const response = await axios.get(`https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/export/${id}`, {
+      responseType: "blob", // important for file download
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    // Extract filename from headers
+    let filename = "test_cases.csv";
+    const contentDisposition = response.headers["content-disposition"];
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename=([^;]+)/);
+      if (match) {
+        filename = match[1].replace(/['"]/g, "");
+      }
+    }
+
+    // Trigger browser download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+    return { success: true, filename };
+  } catch (error: any) {
+    console.error("Export failed:", error);
+    throw new Error(
+      error?.response?.data?.detail ||
+        error?.message ||
+        "Failed to export test cases"
+    );
+  }
+};
+
+
   // Filter test cases based on search and filters
  const filteredTestCases = projectData?.test_cases?.filter(testCase => {
     // Add null/undefined checks for all properties
@@ -322,8 +365,8 @@ const TestCases = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3 mt-4 md:mt-0">
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
+              <Button variant="outline" onClick={exportTestCases}>
+                <Download className="w-4 h-4 mr-2"  />
                 Export CSV
               </Button>
               <Button variant="outline">
