@@ -20,7 +20,6 @@ import axios from "axios";
 
 interface TestCase {
   testCaseId: string;
-  testCaseNo: string;
   priority: string;
   testCaseName: string;
   requirement: string;
@@ -32,7 +31,7 @@ interface TestCase {
 interface ProjectData {
   projectName: string;
   projectId: string;
-  testCases: TestCase[];
+  test_cases: TestCase[];
 }
 
 const TestCases = () => {
@@ -43,7 +42,7 @@ const TestCases = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-const navigate = useNavigate();
+  const navigate = useNavigate();
   // Fetch test cases data when component mounts
   useEffect(() => {
     const fetchTestCases = async () => {
@@ -60,10 +59,18 @@ const navigate = useNavigate();
           }
         );
 
+
+        // With this:
         const data = response.data;
         console.log("Test Cases API Response:", data);
 
-        setProjectData(data);
+        // Flatten the nested array structure
+        const flattenedData = {
+          ...data,
+          test_cases: data.test_cases?.flat() || []
+        };
+
+        setProjectData(flattenedData);
       } catch (error) {
         console.error("Error fetching test cases:", error);
 
@@ -82,117 +89,117 @@ const navigate = useNavigate();
         } else if (error.message === 'Network Error') {
           errorMessage = "Network error. Please check your connection.";
         }
-        setProjectData({
-          "projectName": "ALM Platform Sync",
-          "projectId": "12345",
-          "testCases": [
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId": "12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            },
-            {
-              "testCaseId": "1234",
-              "testCaseNo": "1",
-              "priority": "High",
-              "testCaseName": "Verify heart rate measurement accuracy",
-              "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
-              "steps": [
-                "Attempt login with invalid credentials",
-                "Verify access is denied",
-                "Test password complexity requirements",
-                "Validate session timeout functionality"
-              ],
-              "complianceTags": ["FDA Cybersecurity", "HIPAA"],
-              "testCaseUniqueId":"12345"
-            }
-          ]
-        })
+        // setProjectData({
+        //   "projectName": "ALM Platform Sync",
+        //   "projectId": "12345",
+        //   "testCases": [
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId": "12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     },
+        //     {
+        //       "testCaseId": "1234",
+        //       "testCaseNo": "1",
+        //       "priority": "High",
+        //       "testCaseName": "Verify heart rate measurement accuracy",
+        //       "requirement": "Device shall measure heart rate with ±2 BPM accuracy",
+        //       "steps": [
+        //         "Attempt login with invalid credentials",
+        //         "Verify access is denied",
+        //         "Test password complexity requirements",
+        //         "Validate session timeout functionality"
+        //       ],
+        //       "complianceTags": ["FDA Cybersecurity", "HIPAA"],
+        //       "testCaseUniqueId":"12345"
+        //     }
+        //   ]
+        // })
 
         // setError(errorMessage);
       } finally {
@@ -206,13 +213,19 @@ const navigate = useNavigate();
   }, [id]);
 
   // Filter test cases based on search and filters
-  const filteredTestCases = projectData?.testCases?.filter(testCase => {
-    const matchesSearch = testCase.testCaseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      testCase.requirement.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      testCase.testCaseId.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPriority = priorityFilter === "all" || testCase.priority === priorityFilter;
-    // Note: The API response doesn't include status, so we'll skip status filtering for now
-    // const matchesStatus = statusFilter === "all" || testCase.status === statusFilter;
+ const filteredTestCases = projectData?.test_cases?.filter(testCase => {
+    // Add null/undefined checks for all properties
+    const testCaseName = testCase?.testCaseName || "";
+    const requirement = testCase?.requirement || "";
+    const testCaseId = testCase?.testCaseId || "";
+    const priority = testCase?.priority || "";
+
+    const matchesSearch = testCaseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      requirement.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      testCaseId.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesPriority = priorityFilter === "all" || priority === priorityFilter;
+    
     return matchesSearch && matchesPriority;
   }) || [];
 
@@ -395,7 +408,7 @@ const navigate = useNavigate();
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <span className="font-mono text-sm text-muted-foreground">
-                        TC-{testCase.testCaseNo.padStart(3, '0')}
+                        TC-{testCase.testCaseId.padStart(3, '0')}
                       </span>
                       <span className="font-mono text-xs text-muted-foreground">
                         ID: {testCase.testCaseId}
@@ -448,7 +461,7 @@ const navigate = useNavigate();
                   {/* Actions */}
                   <div className="flex items-center justify-between pt-2 border-t border-border">
                     <div className="text-xs text-muted-foreground">
-                      Test Case #{testCase.testCaseNo}
+                      Test Case #{testCase.testCaseId}
                     </div>
                     <div className="flex items-center space-x-2">
                       <Button variant="ghost" size="sm">
@@ -477,7 +490,7 @@ const navigate = useNavigate();
               <TestTube2 className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <p className="text-lg font-medium text-foreground">No test cases found</p>
               <p className="text-sm text-muted-foreground">
-                {projectData?.testCases?.length === 0
+                {projectData?.test_cases?.length === 0
                   ? "No test cases have been generated for this project yet."
                   : "Try adjusting your search or filter criteria"
                 }

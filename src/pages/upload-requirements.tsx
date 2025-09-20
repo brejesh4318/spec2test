@@ -378,12 +378,12 @@ console.log("Uploading files for project ID:", id);
               {isUploading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
-                  Uploading...
+                  Generating...
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Upload & Continue
+                  Generate Test Cases
                 </>
               )}
             </Button>
