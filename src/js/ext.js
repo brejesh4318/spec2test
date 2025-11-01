@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://spec2test-614430974867.asia-south1.run.app";
 
 export const extCommon = {
   get: (url) => {

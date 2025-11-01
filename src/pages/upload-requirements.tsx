@@ -164,7 +164,7 @@ const UploadRequirements = () => {
       // }
 
       const response = await axios.post(
-        `http://localhost:3000/v1/dash-test/testcaseGenerator/${requestType}`,
+        `https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/testcaseGenerator/${requestType}`,
         formData,
         {
           headers: {
@@ -258,7 +258,17 @@ const UploadRequirements = () => {
                 onClick={handleUpload}
                 size="lg"
                 className="w-full">
-                Submit & Continue Generation
+                {isUploading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Submit & Continue Generation
+                </>
+              )}
               </Button>
             </div>
           </CardContent>

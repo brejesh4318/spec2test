@@ -83,7 +83,7 @@ const TestCaseDetail = () => {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`http://localhost:3000/v1/dash-test/getTestCaseDetail/${testCaseId}`, {
+      const response = await axios.get(`https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/getTestCaseDetail/${testCaseId}`, {
         headers: {
           'Content-Type': 'application/json',
           // Add authorization header if needed

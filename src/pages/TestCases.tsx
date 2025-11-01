@@ -57,7 +57,7 @@ const TestCases = () => {
         setError(null);
 
         const response = await axios.get(
-          `http://localhost:3000/v1/dash-test/getTestCases/${id}`,
+          `https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/getTestCases/${id}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ const TestCases = () => {
 
   const exportTestCases = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/v1/dash-test/export/${id}`, {
+      const response = await axios.get(`https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/export/${id}`, {
         responseType: "blob", // important for file download
         headers: {
           "Content-Type": "application/json",
@@ -315,7 +315,7 @@ const TestCases = () => {
       id: "feature-1",
       name: "Medical Device Validation",
       description: "Core validation features",
-      testCases: filteredTestCases.map(tc => {
+      testCases: filteredTestCases.slice(0, 10).map(tc => {
         // Map priority to mind map format
         let priority: "high" | "medium" | "low" = "medium";
         if (tc.priority === "Critical" || tc.priority === "High") {

@@ -17,7 +17,7 @@ const [timeSaved, setTimeSaved] = useState(0);
   const handlePost = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/v1/dash-test/dashboardData",
+      "https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/dashboardData",
       {
         headers: {
           "Content-Type": "application/json",

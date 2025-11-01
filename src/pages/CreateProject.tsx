@@ -34,7 +34,7 @@ const CreateProject = () => {
     try {
       // Make POST API call to create project
       const response = await axios.post(
-        "http://localhost:3000/v1/dash-test/createProject",
+        "https://spec2test-614430974867.asia-south1.run.app/v1/dash-test/createProject",
         {
           project_name: projectName,
           description: projectDescription,
