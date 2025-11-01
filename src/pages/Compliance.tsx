@@ -63,7 +63,7 @@ const Compliance = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        "https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/",
+        "http://localhost:3000/v1/dash-test/",
         {
           headers: {
             "Content-Type": "application/json",

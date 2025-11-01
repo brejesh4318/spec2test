@@ -67,7 +67,7 @@ const Projects = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        "https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/getProjects",
+        "http://localhost:3000/v1/dash-test/getProjects",
         {
           headers: {
             "Content-Type": "application/json",

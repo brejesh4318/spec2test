@@ -5,17 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  ArrowLeft, 
-  Upload, 
-  File, 
-  FileText, 
-  X, 
-  CheckCircle,
-  AlertCircle,
-  Settings
-} from "lucide-react";
+import { ArrowLeft, Upload, File, FileText, X, CheckCircle, AlertCircle, } from "lucide-react";
 import axios from "axios";
+import { PlatformIntegration } from "@/components/PlatformIntegration";
+
 
 const UploadRequirements = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -24,11 +17,17 @@ const UploadRequirements = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
+  const [requestType, setRequestType] = useState("new");
+  const [viewQuestions, setViewQuestions] = useState(false);
+  const [questions, setQuestions] = useState("");
+  const [hitlAnswers, setHitlAnswers] = useState('');
 
   // Accepted file types
-  const acceptedTypes = [
-    '.pdf', '.doc', '.docx', '.xml', '.md', '.txt'
-  ];
+  const acceptedTypes = [".pdf", ".doc", ".docx", ".xml", ".md", ".txt"];
+
+  const handleAnswerChange = (value: string) => {
+    setHitlAnswers(value);
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -54,19 +53,18 @@ const UploadRequirements = () => {
     e.preventDefault();
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(Array.from(e.target.files));
-      // Reset the input so the same file can be selected again if needed
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
-      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const validFiles = files.filter((file) => {
+      const extension = "." + file.name.split(".").pop()?.toLowerCase();
       return acceptedTypes.includes(extension);
     });
 
-    const invalidFiles = files.filter(file => {
-      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const invalidFiles = files.filter((file) => {
+      const extension = "." + file.name.split(".").pop()?.toLowerCase();
       return !acceptedTypes.includes(extension);
     });
 
@@ -79,11 +77,12 @@ const UploadRequirements = () => {
     }
 
     if (validFiles.length > 0) {
-      // Check for duplicate files
-      const newFiles = validFiles.filter(newFile => 
-        !uploadedFiles.some(existingFile => 
-          existingFile.name === newFile.name && existingFile.size === newFile.size
-        )
+      const newFiles = validFiles.filter(
+        (newFile) =>
+          !uploadedFiles.some(
+            (existingFile) =>
+              existingFile.name === newFile.name && existingFile.size === newFile.size
+          )
       );
 
       const duplicateCount = validFiles.length - newFiles.length;
@@ -96,7 +95,7 @@ const UploadRequirements = () => {
       }
 
       if (newFiles.length > 0) {
-        setUploadedFiles(prev => [...prev, ...newFiles]);
+        setUploadedFiles((prev) => [...prev, ...newFiles]);
         toast({
           title: "Files Added",
           description: `${newFiles.length} file(s) added successfully.`,
@@ -107,20 +106,20 @@ const UploadRequirements = () => {
   };
 
   const removeFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const getFileIcon = (filename: string) => {
-    const extension = filename.split('.').pop()?.toLowerCase();
+    const extension = filename.split(".").pop()?.toLowerCase();
     switch (extension) {
-      case 'pdf':
+      case "pdf":
         return <File className="w-5 h-5 text-red-500" />;
-      case 'doc':
-      case 'docx':
+      case "doc":
+      case "docx":
         return <FileText className="w-5 h-5 text-blue-500" />;
-      case 'xml':
+      case "xml":
         return <File className="w-5 h-5 text-green-500" />;
-      case 'md':
+      case "md":
         return <FileText className="w-5 h-5 text-purple-500" />;
       default:
         return <File className="w-5 h-5 text-gray-500" />;
@@ -128,104 +127,152 @@ const UploadRequirements = () => {
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const handleUpload = async () => {
-  if (uploadedFiles.length === 0) {
-    toast({
-      title: "No Files Selected",
-      description: "Please select at least one file to upload.",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  setIsUploading(true);
-
-  try {
-    // Create FormData for file upload
-    const formData = new FormData();
-console.log("Uploading files for project ID:", id);
-    // Add project ID to form data
-    formData.append("project_id", id || "");
-
-    // Add all files to form data
-    uploadedFiles.forEach((file) => {
-      formData.append("files", file);
-    });
-
-    // Make API call to upload files
-    const response = await axios.post(
-      `https://spec2test-513267201789.asia-south1.run.app/v1/dash-test/testcaseGenerator`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 1)
-          );
-          console.log(`Upload Progress: ${percentCompleted}%`);
-        },
-      }
-    );
-
-    const data = response.data;
-    console.log("Upload API Response:", data);
-
-    toast({
-      title: "Files Uploaded Successfully",
-      description: `${uploadedFiles.length} file(s) uploaded and processed.`,
-    });
-
-    // ✅ Navigate to the test cases page
-    navigate(`/projects/${id}/test-cases`);
-  } catch (error) {
-   // navigate(`/projects/${projectId}/test-cases`);
-    console.error("Error uploading files:", error);
-
-    let errorMessage = "Failed to upload files. Please try again.";
-
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 413) {
-        errorMessage = "File size too large. Please try smaller files.";
-      } else if (error.response?.status === 400) {
-        errorMessage =
-          error.response.data?.message || "Invalid file format or request.";
-      } else if (error.response?.status === 500) {
-        errorMessage = "Server error. Please try again later.";
-      }
+    if (uploadedFiles.length === 0) {
+      toast({
+        title: "No Files Selected",
+        description: "Please select at least one file to upload.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    toast({
-      title: "Upload Failed",
-      description: errorMessage,
-      variant: "destructive",
-    });
-  } finally {
-    setIsUploading(false);
-  }
-};
+    setIsUploading(true);
 
+    try {
+      const formData = new FormData();
+      console.log("Uploading files for project ID:", id);
 
-  const handleSkip = () => {
-    // Navigate to project page even without files
-    navigate(`/projects/${id}`);
+      formData.append("project_id", id || "");
+      formData.append("command", '');
+      if (requestType === "resume") {
+        formData.append("command", hitlAnswers);
+      }
+
+      uploadedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+      // if(requestType === "resume"){
+      //   formData.append("files", "");
+      // }
+
+      const response = await axios.post(
+        `http://localhost:3000/v1/dash-test/testcaseGenerator/${requestType}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            console.log(`Upload Progress: ${percentCompleted}%`);
+          },
+        }
+      );
+
+      const data = response.data;
+      console.log("Upload API Response:", data);
+
+      if (data?.status === "interrupt") {
+        setQuestions(data?.message || "");
+        setRequestType("resume");
+        setViewQuestions(true);
+      } else {
+        toast({
+          title: "Files Uploaded Successfully",
+          description: `${uploadedFiles.length} file(s) uploaded and processed.`,
+        });
+        // ✅ Navigate to the test cases page
+        navigate(`/projects/${id}/test-cases`);
+      }
+    } catch (error) {
+      console.error("Error uploading files:", error);
+
+      let errorMessage = "Failed to upload files. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 413) {
+          errorMessage = "File size too large. Please try smaller files.";
+        } else if (error.response?.status === 400) {
+          errorMessage = error.response.data?.message || "Invalid file format or request.";
+        } else if (error.response?.status === 500) {
+          errorMessage = "Server error. Please try again later.";
+        }
+      }
+
+      toast({
+        title: "Upload Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  return (
+  return viewQuestions ? (
+    // ------------------ HITL SECTION ------------------
+    <div className="min-h-screen bg-background py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Generating Test Cases
+          </h1>
+          <p className="text-muted-foreground">
+            Please wait while we analyze your requirements and generate comprehensive test cases
+          </p>
+        </div>
+        <Card className="animate-fade-in">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <span>Help Us Enhance Your Test Cases</span>
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-2">
+              Answer these questions to help us generate more accurate and comprehensive test
+              cases tailored to your project.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div key='ques' className="space-y-2">
+              <Label htmlFor='input' className="text-sm font-medium">
+                {questions}
+              </Label>
+              <Input
+                id='answer'
+                placeholder='Your Answer'
+                onChange={(e) => handleAnswerChange(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="pt-4 border-t border-border">
+              <Button
+                onClick={handleUpload}
+                size="lg"
+                className="w-full">
+                Submit & Continue Generation
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  ) : (
+    // ------------------ EXISTING UPLOAD SECTION ------------------
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            to="/projects" 
+          <Link
+            to="/projects"
             className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -233,7 +280,8 @@ console.log("Uploading files for project ID:", id);
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Upload Requirements</h1>
           <p className="text-muted-foreground mt-2">
-            Upload your requirement documents to generate automated test cases and ensure compliance.
+            Upload your requirement documents to generate automated test cases and ensure
+            compliance.
           </p>
         </div>
 
@@ -271,16 +319,15 @@ console.log("Uploading files for project ID:", id);
           </CardHeader>
           <CardContent>
             <div
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
-                dragActive
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border hover:border-primary/50'
-              }`}
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${dragActive
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-primary/50"
+                }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
-              onClick={() => document.getElementById('file-upload')?.click()}
+              onClick={() => document.getElementById("file-upload")?.click()}
             >
               <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-lg font-medium text-foreground mb-2">
@@ -292,7 +339,7 @@ console.log("Uploading files for project ID:", id);
               <Input
                 type="file"
                 multiple
-                accept={acceptedTypes.join(',')}
+                accept={acceptedTypes.join(",")}
                 onChange={handleFileInput}
                 className="hidden"
                 id="file-upload"
@@ -381,7 +428,10 @@ console.log("Uploading files for project ID:", id);
             </Button>
           </div>
         </div>
-
+              <br />
+        <div className="mb-6">
+          <PlatformIntegration />
+        </div>
         {/* Info Section */}
         <div className="mt-8 p-6 bg-primary/5 border border-primary/20 rounded-lg">
           <div className="flex items-start space-x-3">
@@ -397,6 +447,7 @@ console.log("Uploading files for project ID:", id);
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

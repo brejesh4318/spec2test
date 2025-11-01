@@ -1,4 +1,4 @@
-const BASE_URL = "https://7d6cf77a6f53.ngrok-free.app";
+const BASE_URL = "http://localhost:3000";
 
 export const extCommon = {
   get: (url) => {
