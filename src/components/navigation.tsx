@@ -42,10 +42,10 @@ const Navigation = () => {
 
           {/* Create Project Button */}
           <NavLink to="/create-project">
-            <Button className="flex items-center space-x-2">
+            {/* <Button className="flex items-center space-x-2">
               <Plus className="w-4 h-4" />
               <span>Create Project</span>
-            </Button>
+            </Button> */}
           </NavLink>
         </div>
       </div>
